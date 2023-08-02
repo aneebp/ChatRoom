@@ -1,0 +1,14 @@
+{% extends 'base/main.html' %}
+
+{% block content %}
+
+    <div>
+        <form action="" method='POST'>
+            {% csrf_token %}
+            {% comment %} we can access the input value by the name  {% endcomment %}
+            <input type="text" name='username' placeholder='Username'>
+            <input type="password" name='password' placeholder='Password'>
+            <input type="submit" value='Login'>
+        </form>
+    </div>
+{% endblock content %}
