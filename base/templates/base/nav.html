@@ -1,2 +1,6 @@
 <h1><a href="/">Logo</a></h1>
 <hr>
+{% comment %} GET is used to get the value from the input tag and we gonna match the name to q  {% endcomment %}
+<form action="{% url 'home' %}" method='GET'>
+    <input type="text" name='q' placeholder="search something...">
+</form>

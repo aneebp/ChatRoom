@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
-from .models import Room
+from .models import Room,Topic
+from django.db.models import Q
 from .form import RoomForm
 
 # Create your views here.
@@ -12,8 +13,20 @@ from .form import RoomForm
 
 
 def home(request):
-    rooms = Room.objects.all()
-    return render(request , 'base/home.html',{'rooms':rooms})
+    # the q variable store the value passed in url 
+    #if the q does't have a value do nothing else do this
+    q= request.GET.get('q') if request.GET.get('q') != None else ''
+    topic = Topic.objects.all()
+    #icontains are used to for if there is similer workd like for python py like that 
+    #in q value matched room display 
+    rooms = Room.objects.filter(
+        Q(topic__name__icontains=q) |
+        Q(name__icontains=q) |
+        Q(description__icontains=q) 
+                                )
+    roomcount = rooms.count()
+    context = {'rooms':rooms,'topics':topic ,'roomcount':roomcount}
+    return render(request , 'base/home.html',context)
 
 
 def room(request,pk):
