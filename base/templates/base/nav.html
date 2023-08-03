@@ -5,5 +5,10 @@
     <input type="text" name='q' placeholder="search something...">
 </form>
 <div>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'logout' %}"><h2>Logout</h2></a>
+    {% else %}
     <a href="{% url 'login' %}"><h2>Login</h2></a>
+    {% endif %}
+    
 </div>
