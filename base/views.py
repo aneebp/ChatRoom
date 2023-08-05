@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from .models import Room,Topic
@@ -17,10 +18,11 @@ from .form import RoomForm
 # ]
 
 def LoginPage(request):
+    page = 'login'
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
-        username= request.POST.get('username')
+        username= request.POST.get('username').lower()
         password = request.POST.get('password')
         try:
             user = User.objects.get(username=username) 
@@ -33,8 +35,25 @@ def LoginPage(request):
             return redirect('home')
         else:
             messages.error(request, "username name or password does not exist")
-    context= {}
+    context= {'page':page}
     return render(request,'base/login_register.html',context)
+
+
+def RegisterPage(request):
+    form = UserCreationForm()
+    if request.method == 'POST':
+        #we gonna take the data from the UserCreationForm and store into form variable
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user =form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            #we also want to login user in
+            login(request,user)
+            return redirect('home')
+        else: 
+            messages.error(request, "An error occured during registration")    
+    return render(request,'base/login_register.html',{'form':form})
 
 
 def LogoutPage(request):
