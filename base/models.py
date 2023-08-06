@@ -16,7 +16,8 @@ class Room(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True , blank=True)
-    #participants =
+    #the reason we use related_name is in host we already used User
+    participants = models.ManyToManyField(User, related_name="participants")
     update = models.DateTimeField(auto_now=True)
     create = models.DateTimeField(auto_now_add=True)
 
