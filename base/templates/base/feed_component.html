@@ -1,0 +1,12 @@
+{% for room in rooms %}
+    <hr>
+    {% comment %} only the login  user can access the edit and delete button {% endcomment %}
+    {% if request.user == room.host %}
+    <h3><a href="{% url 'update-room' room.id%}">Edit</a></h3>
+    <h3><a href="{% url 'delete-room' room.id%}">Delete</a></h3>
+    {% endif %}
+    <h2>{{room.host}}</h2>
+    <h1>{{room.id}}. <a href="{% url 'room' room.id %}"> {{room.name}}</a></h1>
+    <h4>{{room.topic}}</h4>
+    <hr>
+{% endfor %}

@@ -5,38 +5,22 @@
 <style>
     .home-container{
         display : grid;
-        grid-template-columns : 1fr 3fr;
+        grid-template-columns : 1fr 3fr 1fr;
     }
 </style>
 <h1>{{request.user}}</h1>
 
 <div class="home-container">
     <div>
-        <h1>Browse Topic</h1>
-        <hr>
-        <a href="{% url 'home'  %}"><h3>All</h3></a>
-
-        {% for topic in topics %}
-            <div>
-                <a href="{% url 'home'  %}?q={{topic.name}}" ><h3>{{topic.name}}</h3></a>
-            </div>
-        {% endfor %}
+        {% include 'base/topic_component.html' %}
     </div>
     <div>
         <h4>{{roomcount}} Room Available Now</h4>
         <h2><a href="{% url 'create-room'  %}">Create Room</a></h2>
-        {% for room in rooms %}
-            <hr>
-            {% comment %} only the login  user can access the edit and delete button {% endcomment %}
-            {% if request.user == room.host %}
-            <h3><a href="{% url 'update-room' room.id%}">Edit</a></h3>
-            <h3><a href="{% url 'delete-room' room.id%}">Delete</a></h3>
-            {% endif %}
-            <h2>{{room.host}}</h2>
-            <h1>{{room.id}}. <a href="{% url 'room' room.id %}"> {{room.name}}</a></h1>
-            <h4>{{room.topic}}</h4>
-            <hr>
-        {% endfor %}
+      {% include 'base/feed_component.html' %}
+    </div>
+    <div>
+        {% include 'base/activity_component.html' %}
     </div>
 </div>
 
