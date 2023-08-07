@@ -1,0 +1,35 @@
+{% extends 'base/home.html' %}
+
+{% block content %}
+
+<style>
+    .profile_container{
+        display : grid;
+        grid-template-columns: 1fr 3fr 1fr
+    }
+</style>
+
+<div class="profile_container">
+    <div>
+        {% include 'base/topic_component.html' %}
+    </div>
+
+    {% comment %} Center {% endcomment %}
+    <div>
+        <h1>{{user.username}}</h1>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Perspiciatis, illum quidem a est tempora amet illo ad commodi cum explicabo, beatae dolore sunt, nobis hic ea quibusdam asperiores rerum harum?</p>
+        <h2>Study Room</h2>
+        <hr>
+        
+        {% include 'base/feed_component.html' %}
+
+    </div>
+
+    {% comment %} Right {% endcomment %}
+
+    <div>
+        {% include 'base/activity_component.html' %}
+    </div>
+</div>
+
+{% endblock content %}

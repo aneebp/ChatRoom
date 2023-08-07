@@ -82,7 +82,7 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    # in room model the message child model set all
+    # we can get all the child of an object by using _set
     room_message = room.message_set.all()
     if request.method == "POST":
         message = Message.objects.create(
@@ -102,6 +102,19 @@ def room(request, pk):
     }
     return render(request, "base/room.html", context)
 
+
+def userProfile(request,pk):
+    user = User.objects.get(id=pk)
+    topics = Topic.objects.all()
+    rooms = user.room_set.all()
+    home_message = user.message_set.all()
+    context = {
+        'user':user,
+        'topics': topics,
+        'rooms': rooms,
+        'home_message': home_message,
+    }
+    return render(request , 'base/user_profile.html',context)
 
 # if the user is logout ,and user try to create a room it will go to login page
 @login_required(login_url="login")
