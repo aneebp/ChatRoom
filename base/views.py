@@ -66,7 +66,7 @@ def home(request):
     # the q variable store the value passed in url
     # if the q does't have a value do nothing else do this
     q = request.GET.get("q") if request.GET.get("q") != None else ""
-    topic = Topic.objects.all()
+    topic = Topic.objects.all()[0:4]
     # icontains are used to for if there is similer workd like for python py like that
     # in q value matched room display
     rooms = Room.objects.filter(
@@ -171,7 +171,9 @@ def deleteMessage(request,pk):
         message = Message.objects.get(id=pk)
         if request.method == 'POST':
             message.delete()
-            return redirect('room' ,pk=message.room.id)
+            # return redirect('room' ,pk=message.room.id)
+            return redirect('home')
+
         context = {
             'obj': message
         }
@@ -188,3 +190,16 @@ def updateUser(request):
             form.save()
             return redirect('profile', pk=user.id)
     return render(request,'base/update_user.html',{'form':form})
+
+
+def topicView(request):
+    q = request.GET.get("q") if request.GET.get("q") != None else ""
+    topics = Topic.objects.filter(name__icontains=q)
+    context = {"topics":topics}
+    return render(request,'base/topics.html',context)
+
+def activityView(request):
+
+    messages = Message.objects.all()
+    context = {"messages":messages}
+    return render(request,'base/activity.html',context)
