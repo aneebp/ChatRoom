@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .models import Room, Topic, Message
 from django.db.models import Q
-from .form import RoomForm
+from .form import RoomForm,UserForm
 
 # Create your views here.
 # rooms = [
@@ -79,7 +79,7 @@ def home(request):
     context = {"rooms": rooms, "topics": topic, "roomcount": roomcount,"home_message":home_message}
     return render(request, "base/home.html", context)
 
-
+login_required(login_url='login')
 def room(request, pk):
     room = Room.objects.get(id=pk)
     # we can get all the child of an object by using _set
@@ -168,12 +168,23 @@ def deleteRoom(request, pk):
 
 @login_required(login_url="login")
 def deleteMessage(request,pk):
-    message = Message.objects.get(id=pk)
-    if request.method == 'POST':
-        message.delete()
-        return redirect("home")
-    context = {
-        'obj': message
-    }
-    return render(request, "base/delete_room.html",context)
-    
+        message = Message.objects.get(id=pk)
+        if request.method == 'POST':
+            message.delete()
+            return redirect('room' ,pk=message.room.id)
+        context = {
+            'obj': message
+        }
+        return render(request, "base/delete_room.html",context)
+        
+
+@login_required(login_url='login')
+def updateUser(request):
+    user = request.user
+    form = UserForm(instance=user)
+    if request.method == "POST":
+        form = UserForm(request.POST,instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', pk=user.id)
+    return render(request,'base/update_user.html',{'form':form})
