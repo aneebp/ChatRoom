@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from .models import Room, Topic, Message
+from .models import Room, Topic, Message ,User 
 from django.db.models import Q
-from .form import RoomForm,UserForm
+from .form import RoomForm,UserForm ,userCreation
 
 # Create your views here.
 # rooms = [
@@ -41,10 +39,10 @@ def LoginPage(request):
 
 
 def RegisterPage(request):
-    form = UserCreationForm()
+    form = userCreation()
     if request.method == "POST":
         # we gonna take the data from the UserCreationForm and store into form variable
-        form = UserCreationForm(request.POST)
+        form = userCreation(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
@@ -171,8 +169,8 @@ def deleteMessage(request,pk):
         message = Message.objects.get(id=pk)
         if request.method == 'POST':
             message.delete()
-            # return redirect('room' ,pk=message.room.id)
-            return redirect('home')
+            return redirect('room' ,pk=message.room.id)
+            
 
         context = {
             'obj': message
@@ -185,7 +183,8 @@ def updateUser(request):
     user = request.user
     form = UserForm(instance=user)
     if request.method == "POST":
-        form = UserForm(request.POST,instance=user)
+        #REQUEST.FILES IS USER FOR AVATAR
+        form = UserForm(request.POST,request.FILES,instance=user)
         if form.is_valid():
             form.save()
             return redirect('profile', pk=user.id)
