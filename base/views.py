@@ -7,14 +7,6 @@ from .models import Room, Topic, Message ,User
 from django.db.models import Q
 from .form import RoomForm,UserForm ,userCreation
 
-# Create your views here.
-# rooms = [
-#     {"id":1, "name": "lets learn Python"},
-#     {"id":2, "name": "lets learn Java"},
-#     {"id":3, "name": "lets learn C++"}
-
-# ]
-
 
 def LoginPage(request):
     page = "login"
@@ -100,7 +92,7 @@ def room(request, pk):
     }
     return render(request, "base/room.html", context)
 
-
+@login_required(login_url="login")
 def userProfile(request,pk):
     user = User.objects.get(id=pk)
     topics = Topic.objects.all()
@@ -190,15 +182,14 @@ def updateUser(request):
             return redirect('profile', pk=user.id)
     return render(request,'base/update_user.html',{'form':form})
 
-
 def topicView(request):
     q = request.GET.get("q") if request.GET.get("q") != None else ""
     topics = Topic.objects.filter(name__icontains=q)
     context = {"topics":topics}
     return render(request,'base/topics.html',context)
 
+@login_required(login_url="login")
 def activityView(request):
-
     messages = Message.objects.all()
     context = {"messages":messages}
     return render(request,'base/activity.html',context)

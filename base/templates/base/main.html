@@ -10,17 +10,7 @@
     <title>StudyBuddy - Find study partners around the world!</title>
   </head>
   <body>
-    {% if messages %}
-    <ul class="messages">
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-    {% include 'base/nav.html' %}
-    {% block content %}
-    
-    {% endblock content %}
+    {% include 'base/nav.html' %} {% block content %} {% endblock content %}
     <script src="{%static 'js/script.js'%}"></script>
   </body>
 </html>
