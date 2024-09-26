@@ -22,7 +22,9 @@ from django.views.static import serve
 from django.urls import re_path as url
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    #django-admin-honeypot is a fake Django admin login screen to log and notify admins of attempted
+    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    path('boss/', admin.site.urls),
     path('',include('base.urls')),
     path('api/',include('base.api.urls')),
     url(r'^media/(?P<path>.*)$', serve,{'document_root':       settings.MEDIA_ROOT}), 
