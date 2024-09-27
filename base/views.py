@@ -6,6 +6,14 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Room, Topic, Message ,User 
 from django.db.models import Q
 from .form import RoomForm,UserForm ,userCreation
+# email verification
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import force_str,force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage
+
 
 
 def LoginPage(request):
@@ -30,22 +38,61 @@ def LoginPage(request):
     return render(request, "base/login_register.html", context)
 
 
+
 def RegisterPage(request):
     form = userCreation()
     if request.method == "POST":
-        # we gonna take the data from the UserCreationForm and store into form variable
         form = userCreation(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
+            email = form.cleaned_data.get('email') 
             user.save()
-            # we also want to login user in
-            login(request, user)
-            return redirect("home")
+            
+            # Email registration
+            current_site = get_current_site(request)
+            mail_subject = "Please activate your account"
+            message = render_to_string(
+                "base/account_verification_email.html",
+                {
+                    "user": user,
+                    "domain": current_site,
+                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                    "token": default_token_generator.make_token(user),
+                },
+            )
+            to_email = email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            
+            messages.info(
+                request,
+                "Thank you for registering. A verification email has been sent to your inbox. Please check your email to activate your account.",
+            )
+            return redirect("register")
+        
         else:
-            messages.error(request, "An error occured during registration")
+            messages.error(request, "An error occurred during registration.")
+    
     return render(request, "base/login_register.html", {"form": form})
 
+def Activate(request, uidb64, token):
+    try:
+        # Decode the user ID from the URL
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        # Activate the user
+        user.is_active = True
+        user.save()
+        messages.success(request, "Congratulations! Your account has been activated.")
+        return redirect("login")
+    else:
+        messages.error(request, "Invalid activation link.")
+        return redirect("register")
 
 def LogoutPage(request):
     logout(request)

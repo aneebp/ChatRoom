@@ -5,6 +5,7 @@ urlpatterns = [
     path('',views.home,name="home"),
     path('login/',views.LoginPage,name='login'),
     path('register/',views.RegisterPage,name='register'),
+    path("activate/<uidb64>/<token>/", views.Activate, name="activate"),
     path('logout/',views.LogoutPage,name='logout'),
     path('profile/<str:pk>',views.userProfile,name='profile'),
     path('room/<str:pk>',views.room,name="room"),

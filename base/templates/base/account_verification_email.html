@@ -1,0 +1,13 @@
+{% autoescape off %}
+Welcome to StudyBuddy! We're thrilled to have you join our growing community of learners and chat enthusiasts.
+
+To complete your registration and activate your account, please click on the link below: 
+Verify Your Email: http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+If you did not request this registration, please ignore this email.
+
+Thank you for choosing StudyBuddy. We look forward to seeing you engage in exciting discussions and grow your knowledge with others!
+
+Best regards,  
+The StudyBuddy Team 🎓
+{% endautoescape %}
