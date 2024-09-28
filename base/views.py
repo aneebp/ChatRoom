@@ -116,7 +116,7 @@ def home(request):
     context = {"rooms": rooms, "topics": topic, "roomcount": roomcount,"home_message":home_message}
     return render(request, "base/home.html", context)
 
-login_required(login_url='login')
+@login_required(login_url="login")
 def room(request, pk):
     room = Room.objects.get(id=pk)
     # we can get all the child of an object by using _set
